@@ -26,75 +26,47 @@ import com.sisdb.algamoney.api.service.PessoaService;
 @RestController
 @RequestMapping("/pessoas")
 public class PessoaResource {
-	
+
 	@Autowired
 	private PessoaRepository pessoaRepository;
-	
+
 	@Autowired
 	private PessoaService pessoaService;
-	
+
 	@Autowired
 	private ApplicationEventPublisher publisher;
-	
+
 	@GetMapping
 	public List<Pessoa> listar() {
 		return pessoaRepository.findAll();
 	}
-	
-	
-	@PostMapping	
+
+	@PostMapping
 	public ResponseEntity<Pessoa> criar(@Valid @RequestBody Pessoa entity, HttpServletResponse response) {
-		
+
 		Pessoa pessoaSalva = pessoaRepository.save(entity);
-		
+
 		publisher.publishEvent(new RecursoCriadoEvent(this, response, pessoaSalva.getCodigo()));
-		
+
 		return ResponseEntity.status(HttpStatus.CREATED).body(pessoaSalva);
 	}
-	
-	
-	@GetMapping(path = {"/{codigo}"})
-	public ResponseEntity<?> findById(@PathVariable long codigo){
-	   return pessoaRepository.findById(codigo)
-	           .map(record -> ResponseEntity.ok().body(record))
-	           .orElse(ResponseEntity.notFound().build());
+
+	@GetMapping(path = { "/{codigo}" })
+	public ResponseEntity<?> findById(@PathVariable long codigo) {
+		return pessoaRepository.findById(codigo).map(record -> ResponseEntity.ok().body(record))
+				.orElse(ResponseEntity.notFound().build());
 	}
-	
+
 	@PutMapping("/{codigo}")
-	public ResponseEntity<Pessoa> atualizar(@PathVariable Long codigo, @Valid @RequestBody Pessoa pessoa) {		
+	public ResponseEntity<Pessoa> atualizar(@PathVariable Long codigo, @Valid @RequestBody Pessoa pessoa) {
 		Pessoa pessoaSalva = pessoaService.atualizar(codigo, pessoa);
-		return ResponseEntity.ok(pessoaSalva);	
+		return ResponseEntity.ok(pessoaSalva);
 	}
-	
+
 	@PutMapping("/{codigo}/ativo")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void atualizarPropriedadeAtivo(@PathVariable Long codigo, @RequestBody Boolean ativo) {
 		pessoaService.atualizarPropriedadeAtivo(codigo, ativo);
 	}
-	
-
-
-
-
-
-
-
-
-
-
-
-
 
 }
-
-
-
-
-
-
-
-
-
-
-
-

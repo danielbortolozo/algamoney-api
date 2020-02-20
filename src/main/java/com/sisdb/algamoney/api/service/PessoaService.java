@@ -10,51 +10,28 @@ import com.sisdb.algamoney.api.repository.PessoaRepository;
 
 @Service
 public class PessoaService {
-	
+
 	@Autowired
 	private PessoaRepository pessoaRepository;
-	
+
 	public Pessoa atualizar(Long codigo, Pessoa pessoa) {
-        Pessoa pessoaSalva = buscarPessoaCodigo(codigo);		
+		Pessoa pessoaSalva = buscarPessoaCodigo(codigo);
 		BeanUtils.copyProperties(pessoa, pessoaSalva, "codigo");
-		return pessoaRepository.save(pessoaSalva);		
+		return pessoaRepository.save(pessoaSalva);
 	}
-	
+
 	public void atualizarPropriedadeAtivo(Long codigo, Boolean ativo) {
-		Pessoa pessoaSalva = buscarPessoaCodigo(codigo);		
+		Pessoa pessoaSalva = buscarPessoaCodigo(codigo);
 		pessoaSalva.setAtivo(ativo);
 		pessoaRepository.save(pessoaSalva);
 	}
-	
-	
-	
+
 	private Pessoa buscarPessoaCodigo(Long codigo) {
-		Pessoa pessoaSalva = pessoaRepository.findById(codigo).orElse(null);		
+		Pessoa pessoaSalva = pessoaRepository.findById(codigo).orElse(null);
 		if (pessoaSalva == null) {
 			throw new EmptyResultDataAccessException(1);
 		}
 		return pessoaSalva;
 	}
-	
-	
-	
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

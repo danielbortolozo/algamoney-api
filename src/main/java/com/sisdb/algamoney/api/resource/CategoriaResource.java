@@ -24,68 +24,57 @@ import com.sisdb.algamoney.api.repository.CategoriaRepository;
 @RestController
 @RequestMapping("/categorias")
 public class CategoriaResource {
-	
+
 	@Autowired
 	private CategoriaRepository categoriaRepository;
-	
+
 	@Autowired
 	private ApplicationEventPublisher publisher;
-	
-	
+
 //	@GetMapping
 //	public ResponseEntity<?>  listar() {
 //		List<Categoria> categorias = categoriaRepository.findAll();
 //		return !categorias.isEmpty() ? ResponseEntity.ok(categorias) : ResponseEntity.notFound().build();		
 //	}
-	
+
 	@GetMapping
 	public List<Categoria> listar() {
 		return categoriaRepository.findAll();
 	}
-	
+
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	public ResponseEntity<Categoria> criar(@Valid @RequestBody Categoria entity, HttpServletResponse response) {
-		
+
 		Categoria categoriaSalva = categoriaRepository.save(entity);
-		
+
 		publisher.publishEvent(new RecursoCriadoEvent(this, response, categoriaSalva.getCodigo()));
-		
+
 		return ResponseEntity.status(HttpStatus.CREATED).body(categoriaSalva);
 	}
-	
+
 //	@GetMapping("/{codigo}")
 //	public Categoria buscarPeloCodigo(@PathVariable Long codigo) {
 //		return categoriaRepository.findById(codigo).orElse(null);
 //	}
-	
+
 //	@GetMapping("/{codigo}")
 //	public ResponseEntity<Categoria> buscarId(@PathVariable Long codigo) {
 //		Categoria categoria = categoriaRepository.findById(codigo);		
 //		return categoria.getCodigo() != null ? ResponseEntity.ok(categoria) : ResponseEntity.notFound().build();
 //	}
-	
-	@GetMapping(path = {"/{codigo}"})
-	public ResponseEntity<?> findById(@PathVariable Long codigo){
-	   return categoriaRepository.findById(codigo)
-	           .map(record -> ResponseEntity.ok().body(record))
-	           .orElse(ResponseEntity.notFound().build());
+
+	@GetMapping(path = { "/{codigo}" })
+	public ResponseEntity<?> findById(@PathVariable Long codigo) {
+		return categoriaRepository.findById(codigo).map(record -> ResponseEntity.ok().body(record))
+				.orElse(ResponseEntity.notFound().build());
 	}
-	
-	@DeleteMapping(path = {"/{codigo}"})
-	@ResponseStatus(HttpStatus.NO_CONTENT) 
+
+	@DeleteMapping(path = { "/{codigo}" })
+	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void remover(@PathVariable Long codigo) {
 		categoriaRepository.deleteById(codigo);
-		
-		
+
 	}
 
 }
-
-
-
-
-
-
-
-

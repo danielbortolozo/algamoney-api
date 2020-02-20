@@ -30,38 +30,34 @@ import com.sisdb.algamoney.api.service.exception.PessoaInexistenteOuInativaExcep
 @RestController
 @RequestMapping("/lancamentos")
 public class LancamentoResource {
-	
-	
+
 	@Autowired
 	private LancamentoService lancamentoService;
-	
+
 	@Autowired
 	private LancamentoRepository lancamentoRepository;
-	
+
 	@Autowired
 	private MessageSource messageSource;
-	
+
 	@Autowired
 	private ApplicationEventPublisher publisher;
-	
-	
-	@PostMapping	
+
+	@PostMapping
 	public ResponseEntity<Lancamento> criar(@Valid @RequestBody Lancamento lancamento, HttpServletResponse response) {
 		System.out.println("cheguei no lancamenot");
 		Lancamento lancamentoSalvo = lancamentoService.salvar(lancamento);
-		
+
 		publisher.publishEvent(new RecursoCriadoEvent(this, response, lancamentoSalvo.getCodigo()));
-		
+
 		return ResponseEntity.status(HttpStatus.CREATED).body(lancamentoSalvo);
 	}
-	
+
 	@GetMapping
 	public List<Lancamento> pesquisar(LancamentoFilter lancamentoFilter) {
 		return lancamentoRepository.filtrar(lancamentoFilter);
 	}
-	
-	
-	
+
 //	@GetMapping
 //	public List<Lancamento> listar() {
 //		return lancamentoRepository.findAll();
@@ -73,20 +69,17 @@ public class LancamentoResource {
 //	           .map(record -> ResponseEntity.ok().body(record))
 //	           .orElse(ResponseEntity.notFound().build());
 //	}
-		
 
-	
-	@ExceptionHandler({ PessoaInexistenteOuInativaException.class } )
+	@ExceptionHandler({ PessoaInexistenteOuInativaException.class })
 	public ResponseEntity<Object> handlePessoaInexistenteOuInativaException(PessoaInexistenteOuInativaException ex) {
-		
-		String mensagemUsuario = messageSource.getMessage("pessoa-inexistente-ou-inativa", null, LocaleContextHolder.getLocale());
+
+		String mensagemUsuario = messageSource.getMessage("pessoa-inexistente-ou-inativa", null,
+				LocaleContextHolder.getLocale());
 		String mensagemDesenvolvedor = ex.toString();
 		List<Erro> erros = Arrays.asList(new Erro(mensagemUsuario, mensagemDesenvolvedor));
-		
+
 		return ResponseEntity.badRequest().body(erros);
-		
+
 	}
-	
-	
-	
+
 }
