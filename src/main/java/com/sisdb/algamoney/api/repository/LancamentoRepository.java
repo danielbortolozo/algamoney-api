@@ -8,6 +8,8 @@ import com.sisdb.algamoney.api.repository.lancamento.LancamentoRepositoryQuery;
 
 
 public interface LancamentoRepository extends JpaRepository<Lancamento, Long>, LancamentoRepositoryQuery {
+
+//	Page<Lancamento> filtrar(LancamentoFilter lancamentoFilter, Pageable pageable);
 	
 	
 

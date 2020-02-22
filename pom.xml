@@ -19,7 +19,6 @@
 	</properties>
 
 	<dependencies>
-
 	
 	<dependency>
     <groupId>org.postgresql</groupId>
@@ -34,13 +33,7 @@
     <version>6.2.3</version>
    </dependency>
    
-   
-  <!--  <dependency>
-    <groupId>org.hibernate</groupId>
-    <artifactId>hibernate-jpamodelgen</artifactId>
     
-   </dependency>
-	 -->
 	<dependency>
     <groupId>org.hibernate</groupId>
     <artifactId>hibernate-java8</artifactId>    
@@ -59,9 +52,18 @@
     <version>3.4</version>
    </dependency>
 
-	 
-	
-   
+	 <dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+		
+		 <!-- https://mvnrepository.com/artifact/org.springframework.security.oauth/spring-security-oauth2 -->
+      <dependency>
+          <groupId>org.springframework.security.oauth</groupId>
+          <artifactId>spring-security-oauth2</artifactId>
+          <version>2.4.0.RELEASE</version>
+      </dependency>
+
 	
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

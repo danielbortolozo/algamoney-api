@@ -47,7 +47,6 @@ public class LancamentoService {
 		}
 
 		return lancamentoRepository.save(lancamento);
-
 	}
 
 }
