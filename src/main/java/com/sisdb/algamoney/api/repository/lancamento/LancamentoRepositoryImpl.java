@@ -11,6 +11,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import org.hibernate.annotations.OrderBy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -35,6 +36,8 @@ public class LancamentoRepositoryImpl implements LancamentoRepositoryQuery {
 		
 		Predicate[] predicates = criarRestricoes(lancamentoFilter, builder, root);
 		criteria.where(predicates);
+		criteria.orderBy(builder.asc(root.get(Lancamento_.dataVencimento)));
+		
 		
 		TypedQuery<Lancamento> query = manager.createQuery(criteria);
 		adicionarRestricoesDePaginacao(query, pageable);
@@ -73,6 +76,7 @@ public class LancamentoRepositoryImpl implements LancamentoRepositoryQuery {
 		if (!StringUtils.isEmpty(lancamentoFilter.getDescricao())) {
 			predicates.add(builder.like(builder.lower(root.get(Lancamento_.descricao)),
 					"%" + lancamentoFilter.getDescricao().toLowerCase() + "%"));
+						
 		}
 
 		if (lancamentoFilter.getDataVencimentoDe() != null) {

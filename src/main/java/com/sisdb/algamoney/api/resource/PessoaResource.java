@@ -7,8 +7,12 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,12 +23,17 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sisdb.algamoney.api.event.RecursoCriadoEvent;
+import com.sisdb.algamoney.api.model.Categoria;
+import com.sisdb.algamoney.api.model.Lancamento;
 import com.sisdb.algamoney.api.model.Pessoa;
 import com.sisdb.algamoney.api.repository.PessoaRepository;
+import com.sisdb.algamoney.api.repository.filter.LancamentoFilter;
+import com.sisdb.algamoney.api.repository.filter.PessoaFilter;
 import com.sisdb.algamoney.api.service.PessoaService;
 
 @RestController
 @RequestMapping("/pessoas")
+@CrossOrigin(maxAge = 10, origins = { "http://localhost:4200"} )
 public class PessoaResource {
 
 	@Autowired
@@ -36,10 +45,21 @@ public class PessoaResource {
 	@Autowired
 	private ApplicationEventPublisher publisher;
 
+//	@GetMapping
+//	public List<Pessoa> listar() {
+//		return pessoaRepository.findAll();
+//	}
+	
 	@GetMapping
+	public Page<Pessoa> pesquisar(PessoaFilter pessoaFilter, Pageable pageable) {
+		return pessoaRepository.filtrar(pessoaFilter, pageable);
+	}
+	
+	@GetMapping("/listar")
 	public List<Pessoa> listar() {
 		return pessoaRepository.findAll();
 	}
+	
 
 	@PostMapping
 	public ResponseEntity<Pessoa> criar(@Valid @RequestBody Pessoa entity, HttpServletResponse response) {
@@ -67,6 +87,13 @@ public class PessoaResource {
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void atualizarPropriedadeAtivo(@PathVariable Long codigo, @RequestBody Boolean ativo) {
 		pessoaService.atualizarPropriedadeAtivo(codigo, ativo);
+	}
+	
+	@DeleteMapping(path = { "/{codigo}" })
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void remover(@PathVariable Long codigo) {
+		System.out.println("cheguei no excluir...>>>>");
+		pessoaRepository.deleteById(codigo);
 	}
 
 }
